@@ -6,7 +6,8 @@ from PIL import Image
 import pickle as pk
 import streamlit as st
 
-model = load_model("cotton_model.h5")
+
+model = load_model("cotton_model.h5", compile=False)
 
 st.markdown("""
 <style>
