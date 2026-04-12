@@ -7,7 +7,8 @@ import pickle as pk
 import streamlit as st
 
 model = load_model("cotton_model.h5", compile=False)
-model.save("new_model.keras")
+
+st.write("Model loaded successfully ✅")
 
 st.markdown("""
 <style>
