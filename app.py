@@ -8,8 +8,6 @@ import streamlit as st
 
 model = load_model("cotton_model.h5", compile=False)
 
-st.write("Model loaded successfully ✅")
-
 st.markdown("""
 <style>
 body {
