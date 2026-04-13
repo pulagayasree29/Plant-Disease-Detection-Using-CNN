@@ -1,4 +1,0 @@
-# System dependencies for TensorFlow
-libgcc
-glibc
-libstdc++
