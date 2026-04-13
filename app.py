@@ -3,32 +3,6 @@ import numpy as np
 from PIL import Image
 import os
 
-# Global variables
-model = None
-MODEL_LOADED = False
-
-# ================= LOAD MODEL =================
-def load_model_safe():
-    global model, MODEL_LOADED
-    if MODEL_LOADED:
-        return model
-    
-    try:
-        import tensorflow as tf
-        from tensorflow.keras.models import load_model
-        from tensorflow.keras.preprocessing.image import img_to_array
-        
-        if os.path.exists("cotton_model.h5"):
-            model = load_model("cotton_model.h5")
-            MODEL_LOADED = True
-            return model
-        else:
-            st.error("Model file 'cotton_model.h5' not found!")
-            return None
-    except Exception as e:
-        st.error(f"Error loading TensorFlow or model: {e}")
-        st.warning("This might be due to incompatible dependencies. Please check deployment logs.")
-        return None
 
 # ================= UI DESIGN =================
 st.markdown("""
