@@ -1,18 +1,34 @@
 import streamlit as st
 import numpy as np
 from PIL import Image
+import os
+
+# Global variables
+model = None
+MODEL_LOADED = False
 
 # ================= LOAD MODEL =================
-try:
-    import tensorflow as tf
-    from tensorflow.keras.models import load_model
-    from tensorflow.keras.preprocessing.image import img_to_array
-    model = load_model("cotton_model.h5")
-    MODEL_LOADED = True
-except Exception as e:
-    st.error(f"Error loading model: {e}")
-    st.warning("Model could not be loaded. Please check if the model file exists and dependencies are installed.")
-    MODEL_LOADED = False
+def load_model_safe():
+    global model, MODEL_LOADED
+    if MODEL_LOADED:
+        return model
+    
+    try:
+        import tensorflow as tf
+        from tensorflow.keras.models import load_model
+        from tensorflow.keras.preprocessing.image import img_to_array
+        
+        if os.path.exists("cotton_model.h5"):
+            model = load_model("cotton_model.h5")
+            MODEL_LOADED = True
+            return model
+        else:
+            st.error("Model file 'cotton_model.h5' not found!")
+            return None
+    except Exception as e:
+        st.error(f"Error loading TensorFlow or model: {e}")
+        st.warning("This might be due to incompatible dependencies. Please check deployment logs.")
+        return None
 
 # ================= UI DESIGN =================
 st.markdown("""
@@ -74,11 +90,16 @@ elif selected_class == "Target spot":
 
 # ================= IMAGE PREPROCESS =================
 def preprocess_image(image):
-    image = image.resize((180, 180))
-    image_array = img_to_array(image)
-    image_array = image_array / 255.0
-    image_array = np.expand_dims(image_array, axis=0)
-    return image_array
+    try:
+        from tensorflow.keras.preprocessing.image import img_to_array
+        image = image.resize((180, 180))
+        image_array = img_to_array(image)
+        image_array = image_array / 255.0
+        image_array = np.expand_dims(image_array, axis=0)
+        return image_array
+    except ImportError as e:
+        st.error(f"TensorFlow not available for preprocessing: {e}")
+        return None
 
 # ================= FILE UPLOAD =================
 uploaded_file = st.file_uploader(
@@ -87,7 +108,9 @@ uploaded_file = st.file_uploader(
 )
 
 if uploaded_file is not None:
-    if not MODEL_LOADED:
+    # Try to load model
+    model = load_model_safe()
+    if model is None:
         st.error("Cannot make predictions: Model not loaded. Please check deployment logs.")
         st.stop()
     
@@ -96,6 +119,9 @@ if uploaded_file is not None:
 
     # Preprocess
     processed_image = preprocess_image(image)
+    if processed_image is None:
+        st.error("Cannot preprocess image: TensorFlow not available.")
+        st.stop()
 
     # Prediction
     prediction = model.predict(processed_image)
