@@ -6,8 +6,8 @@ import numpy as np
 from PIL import Image
 import streamlit as st
 
-# ✅ LOAD MODEL (FINAL FIX)
-model = load_model("cotton_model.h5", compile=False)
+# ================= LOAD MODEL =================
+model = load_model("cotton_model.keras")
 
 # ================= UI DESIGN =================
 st.markdown("""
@@ -36,7 +36,14 @@ This application helps identify leaf diseases using Deep Learning.
 """)
 
 # ================= CLASS LIST =================
-classes = ['Healthy', 'Army worm', 'Bacterial blight', 'Aphids', 'Powdery mildew', 'Target spot']
+classes = [
+    'Healthy',
+    'Army worm',
+    'Bacterial blight',
+    'Aphids',
+    'Powdery mildew',
+    'Target spot'
+]
 
 # ================= SIDEBAR =================
 st.sidebar.title("Class Information")
@@ -69,7 +76,10 @@ def preprocess_image(image):
     return image_array
 
 # ================= FILE UPLOAD =================
-uploaded_file = st.file_uploader("📤 Upload a Leaf Image", type=["jpg", "png", "jpeg"])
+uploaded_file = st.file_uploader(
+    "📤 Upload a Leaf Image",
+    type=["jpg", "png", "jpeg"]
+)
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
