@@ -1,13 +1,18 @@
-import tensorflow as tf
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import img_to_array
-
+import streamlit as st
 import numpy as np
 from PIL import Image
-import streamlit as st
 
 # ================= LOAD MODEL =================
-model = load_model("cotton_model.h5")
+try:
+    import tensorflow as tf
+    from tensorflow.keras.models import load_model
+    from tensorflow.keras.preprocessing.image import img_to_array
+    model = load_model("cotton_model.h5")
+    MODEL_LOADED = True
+except Exception as e:
+    st.error(f"Error loading model: {e}")
+    st.warning("Model could not be loaded. Please check if the model file exists and dependencies are installed.")
+    MODEL_LOADED = False
 
 # ================= UI DESIGN =================
 st.markdown("""
@@ -82,6 +87,10 @@ uploaded_file = st.file_uploader(
 )
 
 if uploaded_file is not None:
+    if not MODEL_LOADED:
+        st.error("Cannot make predictions: Model not loaded. Please check deployment logs.")
+        st.stop()
+    
     image = Image.open(uploaded_file)
     st.image(image, caption="Uploaded Image", width=300)
 
