@@ -7,7 +7,7 @@ from PIL import Image
 import streamlit as st
 
 # ================= LOAD MODEL =================
-model = load_model("cotton_model.keras")
+model = load_model("cotton_model.h5")
 
 # ================= UI DESIGN =================
 st.markdown("""
