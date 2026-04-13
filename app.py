@@ -1,12 +1,4 @@
-import os
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-
 import tensorflow as tf
-import keras
-
-# ✅ THIS LINE IS VERY IMPORTANT
-keras.config.enable_legacy_serialization()
-
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
 
@@ -14,8 +6,8 @@ import numpy as np
 from PIL import Image
 import streamlit as st
 
-# ✅ LOAD MODEL (IMPORTANT CHANGE)
-model = tf.keras.models.load_model("cotton_model.h5", compile=False)
+# ✅ LOAD MODEL (FINAL FIX)
+model = load_model("cotton_model.h5", compile=False)
 
 # ================= UI DESIGN =================
 st.markdown("""
