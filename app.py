@@ -1,3 +1,5 @@
+
+import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
 
@@ -5,8 +7,10 @@ import numpy as np
 from PIL import Image
 import streamlit as st
 
-# ✅ LOAD MODEL (IMPORTANT CHANGE)
-model = load_model("cotton_model.h5")
+
+
+# FIX
+model = load_model("cotton_model.h5", compile=False)
 
 # ================= UI DESIGN =================
 st.markdown("""
