@@ -1,5 +1,4 @@
-# Requirements for Streamlit Cloud deployment - Python 3.10 compatible
+# Requirements for Streamlit Cloud deployment - Python 3.14.3 compatible
 streamlit==1.37.1
-tensorflow==2.12.0
-numpy==1.23.5
-pillow==9.5.0
+numpy>=1.26.0
+pillow>=10.0.0
