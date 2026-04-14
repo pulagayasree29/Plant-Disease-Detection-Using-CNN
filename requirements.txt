@@ -1,4 +1,2 @@
-# Requirements for Streamlit Cloud deployment - Python 3.14.3 compatible versions
+# Minimal requirements for Streamlit Cloud deployment
 streamlit==1.37.1
-numpy>=1.26.0
-pillow>=10.0.0
