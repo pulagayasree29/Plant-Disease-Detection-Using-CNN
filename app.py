@@ -1,13 +1,37 @@
-import tensorflow as tf
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import img_to_array
-
+import streamlit as st
 import numpy as np
 from PIL import Image
-import streamlit as st
+import os
+
+# Global variables
+model = None
+MODEL_LOADED = False
 
 # ✅ LOAD MODEL (IMPORTANT CHANGE)
-model = tf.keras.models.load_model("cotton_model.h5", compile=False)
+def load_model_safe():
+    global model, MODEL_LOADED
+    if MODEL_LOADED:
+        return model
+    
+    try:
+        import tensorflow as tf
+        from tensorflow.keras.models import load_model
+        from tensorflow.keras.preprocessing.image import img_to_array
+        
+        if os.path.exists("cotton_model.h5"):
+            model = tf.keras.models.load_model("cotton_model.h5", compile=False)
+            MODEL_LOADED = True
+            return model
+        else:
+            st.error("Model file 'cotton_model.h5' not found!")
+            return None
+    except ImportError as e:
+        st.error(f"TensorFlow not available: {e}")
+        st.warning("ML functionality is currently unavailable.")
+        return None
+    except Exception as e:
+        st.error(f"Error loading model: {e}")
+        return None
 
 # ================= UI DESIGN =================
 st.markdown("""
@@ -62,11 +86,16 @@ elif selected_class == "Target spot":
 
 # ================= IMAGE PREPROCESS =================
 def preprocess_image(image):
-    image = image.resize((180, 180))
-    image_array = img_to_array(image)
-    image_array = image_array / 255.0
-    image_array = np.expand_dims(image_array, axis=0)
-    return image_array
+    try:
+        from tensorflow.keras.preprocessing.image import img_to_array
+        image = image.resize((180, 180))
+        image_array = img_to_array(image)
+        image_array = image_array / 255.0
+        image_array = np.expand_dims(image_array, axis=0)
+        return image_array
+    except ImportError:
+        st.error("TensorFlow not available for preprocessing")
+        return None
 
 # ================= FILE UPLOAD =================
 uploaded_file = st.file_uploader("📤 Upload a Leaf Image", type=["jpg", "png", "jpeg"])
@@ -75,8 +104,17 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption="Uploaded Image", width=300)
 
+    # Try to load model
+    model = load_model_safe()
+    if model is None:
+        st.error("Cannot make predictions: Model not loaded.")
+        st.stop()
+
     # Preprocess
     processed_image = preprocess_image(image)
+    if processed_image is None:
+        st.error("Cannot preprocess image: TensorFlow not available.")
+        st.stop()
 
     # Prediction
     prediction = model.predict(processed_image)
@@ -84,7 +122,7 @@ if uploaded_file is not None:
     predicted_class_name = classes[predicted_class_index]
 
     # ================= RESULT =================
-    st.success(f"🌱 Predicted Class: {predicted_class_name}")
+    st.success(f" Predicted Class: {predicted_class_name}")
 
     # ================= DETAILS =================
     if predicted_class_index == 0:
