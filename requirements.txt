@@ -1,4 +1,4 @@
-# Requirements for Streamlit Cloud deployment - TensorFlow removed to fix compatibility issues
-streamlit==1.28.1
-numpy==1.23.5
-pillow==9.5.0
+# Requirements for Streamlit Cloud deployment - Python 3.14.3 compatible versions
+streamlit==1.37.1
+numpy>=1.26.0
+pillow>=10.0.0
